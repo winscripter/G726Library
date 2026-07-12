@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="G726Library.Benchmarks/G726Library.Benchmarks.csproj" Id="af1dbb8e-12ff-4390-ae1e-fda4f687d2eb" />
+  <Project Path="G726Library/G726Library.csproj" />
+  <Project Path="ReencoderExample/ReencoderExample.csproj" Id="5b2b08ec-25cc-435a-bfa8-8f3495585780" />
+</Solution>
