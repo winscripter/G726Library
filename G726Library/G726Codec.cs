@@ -48,7 +48,7 @@
         /// <summary>
         /// Encodes the input sample into G.726 where the input sample is G.711Mu.
         /// </summary>
-        /// <param name="pcm">The G.711Mu sample</param>
+        /// <param name="g711Mu">The G.711Mu sample</param>
         /// <returns>G.726 sample</returns>
         public int EncodeFromG711Mu(short g711Mu) => g726Codec.EncodeSample(g711Mu, SampleKind.G711U);
 
