@@ -3,9 +3,10 @@
     /// <summary>
     /// A G.726 codec
     /// </summary>
-    public sealed class G726Codec
+    public class G726Codec
     {
         private readonly IG726Codec g726Codec;
+
         internal G726Codec(IG726Codec codec) => this.g726Codec = codec;
 
         /// <summary>
@@ -31,6 +32,7 @@
         /// </summary>
         /// <returns>A new G.726 codec</returns>
         public static G726Codec Create40Kbps() => new(new Codec40());
+
         /// <summary>
         /// Encodes the input sample into G.726 where the input sample is PCM.
         /// </summary>
