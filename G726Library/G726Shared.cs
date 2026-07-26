@@ -63,7 +63,7 @@ internal static class G726Shared
         }
     }
 
-    public static int TandemAdjustAlaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
+    public static byte TandemAdjustAlaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
     {
         if (sr <= -32768)
             sr = -1;
@@ -74,7 +74,7 @@ internal static class G726Shared
 
         if (id == i)
         {
-            return sp;
+            return (byte)sp;
         }
         else
         {
@@ -89,11 +89,11 @@ internal static class G726Shared
                     ? (sp == 0xAA) ? 0xAA : ((sp ^ 0x55) + 1) ^ 0x55
                     : (sp == 0x55) ? 0xD5 : ((sp ^ 0x55) - 1) ^ 0x55;
 
-            return sd;
+            return (byte)sd;
         }
     }
 
-    public static int TandemAdjustMulaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
+    public static byte TandemAdjustMulaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
     {
         if (sr <= -32768)
             sr = 0;
@@ -104,7 +104,7 @@ internal static class G726Shared
 
         if (id == i)
         {
-            return sp;
+            return (byte)sp;
         }
         else
         {
@@ -119,7 +119,7 @@ internal static class G726Shared
                     ? (sp == 0x80) ? 0x80 : sp - 1
                     : (sp == 0x7F) ? 0xFE : sp + 1;
 
-            return sd;
+            return (byte)sd;
         }
     }
 
