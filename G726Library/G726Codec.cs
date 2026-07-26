@@ -3,7 +3,7 @@
     /// <summary>
     /// A G.726 codec
     /// </summary>
-    public partial class G726Codec
+    public class G726Codec
     {
         private readonly IG726Codec g726Codec;
 
