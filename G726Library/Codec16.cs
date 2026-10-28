@@ -4,6 +4,9 @@
 
 namespace G726Library;
 
+/// <summary>
+/// 16 Kbit/s G.726 encoder and decoder.
+/// </summary>
 internal readonly struct Codec16() : IG726Codec
 {
     public static ReadOnlySpan<short> DqlnTable => [116, 365, 365, 116];
@@ -16,6 +19,7 @@ internal readonly struct Codec16() : IG726Codec
 
     private readonly G726Context context = new();
 
+    /// <inheritdoc />
     public int EncodeSample(short inputSample, SampleKind sampleType)
     {
         short sl = (short)(G726Shared.ConvertSample(inputSample, sampleType) >> 2);
@@ -42,6 +46,7 @@ internal readonly struct Codec16() : IG726Codec
         return i;
     }
 
+    /// <inheritdoc />
     public int DecodeSample(int i, SampleKind sampleType)
     {
         i &= 0x03;
