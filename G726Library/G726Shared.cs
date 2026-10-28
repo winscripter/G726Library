@@ -1,4 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Copyright (c) 2023-2026, winscripter
+// Licensed under the MIT License.
+// See LICENSE.txt for license details.
+
+using System.Runtime.CompilerServices;
 
 namespace G726Library;
 

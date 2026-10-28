@@ -1,6 +1,10 @@
-﻿namespace G726Library;
+﻿// Copyright (c) 2023-2026, winscripter
+// Licensed under the MIT License.
+// See LICENSE.txt for license details.
 
-internal enum SampleKind
+namespace G726Library;
+
+internal enum SampleKind : byte
 {
     Pcm,
     G711U,
