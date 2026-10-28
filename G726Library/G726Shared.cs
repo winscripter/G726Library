@@ -5,8 +5,8 @@ namespace G726Library;
 internal static class G726Shared
 {
     public static ReadOnlySpan<int> Power2Table => [
-            1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80,
-            0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000];
+        1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80,
+        0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000];
 
     public static int QuantizeWithinRange(int value, ReadOnlySpan<int> table, int size)
     {
@@ -26,7 +26,7 @@ internal static class G726Shared
         int anmant = (anmag == 0) ? 32 : (anexp >= 0) ? anmag >> anexp : anmag << -anexp;
         int wanexp = anexp + ((fpRepresentation >> 6) & 0xF) - 13;
 
-        int wanmant = (anmant * (fpRepresentation & 077) + 0x30) >> 4;
+        int wanmant = ((anmant * (fpRepresentation & 077)) + 0x30) >> 4;
         int retval = (wanexp >= 0) ? ((wanmant << wanexp) & 0x7FFF) : (wanmant >> -wanexp);
 
         return ((integer ^ fpRepresentation) < 0) ? -retval : retval;
@@ -66,7 +66,9 @@ internal static class G726Shared
     public static byte TandemAdjustAlaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
     {
         if (sr <= -32768)
+        {
             sr = -1;
+        }
 
         int sp = G711Codec.LinearToA((short)((sr >> 1) << 3));
         int dx = (G711Codec.AToLinear((byte)sp) >> 2) - se;

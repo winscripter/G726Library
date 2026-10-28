@@ -1,6 +1,6 @@
 ﻿namespace G726Library;
 
-internal sealed class Codec24 : IG726Codec
+internal readonly struct Codec24() : IG726Codec
 {
     public static ReadOnlySpan<short> DqlnTable => [-2048, 135, 273, 373, 373, 273, 135, -2048];
     public static ReadOnlySpan<short> WiTable => [-128, 960, 4384, 18624, 18624, 4384, 960, -128];

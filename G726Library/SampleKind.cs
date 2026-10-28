@@ -1,9 +1,8 @@
-﻿namespace G726Library
+﻿namespace G726Library;
+
+internal enum SampleKind
 {
-    internal enum SampleKind
-    {
-        Pcm,
-        G711U,
-        G711A
-    }
+    Pcm,
+    G711U,
+    G711A
 }
