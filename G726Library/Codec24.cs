@@ -3,8 +3,11 @@
 internal readonly struct Codec24() : IG726Codec
 {
     public static ReadOnlySpan<short> DqlnTable => [-2048, 135, 273, 373, 373, 273, 135, -2048];
+
     public static ReadOnlySpan<short> WiTable => [-128, 960, 4384, 18624, 18624, 4384, 960, -128];
+
     public static ReadOnlySpan<short> FiTable => [0, 0x200, 0x400, 0xE00, 0xE00, 0x400, 0x200, 0];
+
     public static ReadOnlySpan<int> QTable => [8, 218, 331];
 
     private readonly G726Context context = new();
