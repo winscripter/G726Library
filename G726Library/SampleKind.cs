@@ -7,7 +7,7 @@ namespace G726Library;
 /// <summary>
 /// Represents the kind of an input or output sample used by the encoder and decoder, respectively.
 /// </summary>
-internal enum SampleKind : byte
+public enum SampleKind : byte
 {
     /// <summary>
     /// Linear/PCM samples are used for input or output.

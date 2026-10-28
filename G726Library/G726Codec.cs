@@ -9,7 +9,7 @@ namespace G726Library;
 /// </summary>
 public class G726Codec
 {
-    private readonly IG726Codec g726Codec;
+    internal readonly IG726Codec g726Codec;
 
     internal G726Codec(IG726Codec codec) => this.g726Codec = codec;
 
