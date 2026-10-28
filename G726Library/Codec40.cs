@@ -9,28 +9,45 @@ namespace G726Library;
 /// </summary>
 internal readonly struct Codec40() : IG726Codec
 {
+    /// <summary>
+    /// Maps code words to reconstructed scale factor normalized log magnitude values.
+    /// </summary>
     public static ReadOnlySpan<short> DqlnTable => [
         -2048, -66, 28, 104, 169, 224, 274, 318,
         358, 395, 429, 459, 488, 514, 539, 566,
         566, 539, 514, 488, 459, 429, 395, 358,
         318, 274, 224, 169, 104, 28, -66, -2048];
 
+    /// <summary>
+    /// Maps code words to log of scale factor multiplier.
+    /// </summary>
     public static ReadOnlySpan<short> WiTable => [
         448, 448, 768, 1248, 1280, 1312, 1856, 3200,
         4512, 5728, 7008, 8960, 11456, 14080, 16928, 22272,
         22272, 16928, 14080, 11456, 8960, 7008, 5728, 4512,
         3200, 1856, 1312, 1280, 1248, 768, 448, 448];
 
+    /// <summary>
+    /// Maps code words to a set of values whose long and short term averages
+    /// are computed and then compared to give an indication how
+    /// stationary (steady state) the signal is.
+    /// </summary>
     public static ReadOnlySpan<short> FiTable => [
         0, 0, 0, 0, 0, 0x200, 0x200, 0x200,
         0x200, 0x200, 0x400, 0x600, 0x800, 0xA00, 0xC00, 0xC00,
         0xC00, 0xC00, 0xA00, 0x800, 0x600, 0x400, 0x200, 0x200,
         0x200, 0x200, 0x200, 0, 0, 0, 0, 0];
 
+    /// <summary>
+    /// Quantization table.
+    /// </summary>
     public static ReadOnlySpan<int> QTable => [
         -122, -16, 68, 139, 198, 250, 298, 339,
         378, 413, 445, 475, 502, 528, 553];
 
+    /// <summary>
+    /// Contains the decoding/encoding state.
+    /// </summary>
     private readonly G726Context context = new();
 
     /// <inheritdoc />

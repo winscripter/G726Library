@@ -9,14 +9,31 @@ namespace G726Library;
 /// </summary>
 internal readonly struct Codec24() : IG726Codec
 {
+    /// <summary>
+    /// Maps code words to reconstructed scale factor normalized log magnitude values.
+    /// </summary>
     public static ReadOnlySpan<short> DqlnTable => [-2048, 135, 273, 373, 373, 273, 135, -2048];
 
+    /// <summary>
+    /// Maps code words to log of scale factor multiplier.
+    /// </summary>
     public static ReadOnlySpan<short> WiTable => [-128, 960, 4384, 18624, 18624, 4384, 960, -128];
 
+    /// <summary>
+    /// Maps code words to a set of values whose long and short term averages
+    /// are computed and then compared to give an indication how
+    /// stationary (steady state) the signal is.
+    /// </summary>
     public static ReadOnlySpan<short> FiTable => [0, 0x200, 0x400, 0xE00, 0xE00, 0x400, 0x200, 0];
 
+    /// <summary>
+    /// Quantization table.
+    /// </summary>
     public static ReadOnlySpan<int> QTable => [8, 218, 331];
 
+    /// <summary>
+    /// Contains the decoding/encoding state.
+    /// </summary>
     private readonly G726Context context = new();
 
     /// <inheritdoc />

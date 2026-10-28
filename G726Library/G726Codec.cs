@@ -14,25 +14,25 @@ public class G726Codec
     internal G726Codec(IG726Codec codec) => this.g726Codec = codec;
 
     /// <summary>
-    /// Creates a new G.726 (16 Kbps) codec.
+    /// Creates a new G.726 (16 Kbit/s) codec.
     /// </summary>
     /// <returns>A new G.726 codec</returns>
     public static G726Codec Create16Kbps() => new(new Codec16());
 
     /// <summary>
-    /// Creates a new G.726 (24 Kbps) codec.
+    /// Creates a new G.726 (24 Kbit/s) codec.
     /// </summary>
     /// <returns>A new G.726 codec</returns>
     public static G726Codec Create24Kbps() => new(new Codec24());
 
     /// <summary>
-    /// Creates a new G.726 (32 Kbps) codec.
+    /// Creates a new G.726 (32 Kbit/s) codec.
     /// </summary>
     /// <returns>A new G.726 codec</returns>
     public static G726Codec Create32Kbps() => new(new Codec32());
 
     /// <summary>
-    /// Creates a new G.726 (40 Kbps) codec.
+    /// Creates a new G.726 (40 Kbit/s) codec.
     /// </summary>
     /// <returns>A new G.726 codec</returns>
     public static G726Codec Create40Kbps() => new(new Codec40());

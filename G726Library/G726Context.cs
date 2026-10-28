@@ -4,30 +4,91 @@
 
 namespace G726Library;
 
+/// <summary>
+/// Holds the active G.726 decoding and encoding state.
+/// </summary>
 internal unsafe struct G726Context
 {
-    public int Yl, Yu, Dms, Dml, Ap, Td;
-    public fixed int A[2], Pk[2], Sr[2], B[6], Dq[6];
+    /// <summary>
+    /// This state variable contains the locked or steady step size multiplier.
+    /// </summary>
+    public int Yl;
 
+    /// <summary>
+    /// This state variable contains the un-locked or non-steady step size multiplier.
+    /// </summary>
+    public int Yu;
+
+    /// <summary>
+    /// Short-term energy estimate.
+    /// </summary>
+    public int Dms;
+
+    /// <summary>
+    /// Long-term energy estimate.
+    /// </summary>
+    public int Dml;
+
+    /// <summary>
+    /// Linear weighting coefficient of <see cref="Yl"/> and <see cref="Yu"/>.
+    /// </summary>
+    public int Ap;
+
+    /// <summary>
+    /// Delayed tone detect.
+    /// </summary>
+    public int Td;
+
+    /// <summary>
+    /// Coefficients of pole portion of prediction filter.
+    /// </summary>
+    public fixed int A[2];
+
+    /// <summary>
+    /// Signs of previous two samples of a partially reconstructed signal.
+    /// </summary>
+    public fixed int Pk[2];
+
+    /// <summary>
+    /// Previous 6 samples of the quantized difference signal represented in an internal floating point format.
+    /// </summary>
+    public fixed int Dq[6];
+
+    /// <summary>
+    /// Previous 2 samples of the quantized difference signal represented in an internal floating point format.
+    /// </summary>
+    public fixed int Sr[2];
+
+    /// <summary>
+    /// Coefficients of zero portion of prediction filter.
+    /// </summary>
+    public fixed int B[6];
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="G726Context"/> struct.
+    /// </summary>
     public G726Context()
     {
         this.Yl = 34816;
         this.Yu = 544;
 
-        for (int i = 0; i < 2; i++)
-        {
-            this.Sr[i] = 32;
-            this.A[i] = 0;
-            this.Pk[i] = 0;
-        }
+        // All values of Sr are set to 32
+        this.Sr[0] = 32;
+        this.Sr[1] = 32;
 
-        for (int i = 0; i < 6; i++)
-        {
-            this.Dq[i] = 32;
-            this.B[i] = 0;
-        }
+        // Similarly, all values of Dq are set to 32
+        this.Dq[0] = 32;
+        this.Dq[1] = 32;
+        this.Dq[2] = 32;
+        this.Dq[3] = 32;
+        this.Dq[4] = 32;
+        this.Dq[5] = 32;
     }
 
+    /// <summary>
+    /// Computes the estimated signal from 6-zero predictor.
+    /// </summary>
+    /// <returns>The zero predicotr.</returns>
     public readonly int GetZeroPredictor() =>
         G726Shared.FloatingMultiply(this.B[0] >> 2, this.Dq[0])
             + G726Shared.FloatingMultiply(this.B[1] >> 2, this.Dq[1])
@@ -36,8 +97,18 @@ internal unsafe struct G726Context
             + G726Shared.FloatingMultiply(this.B[4] >> 2, this.Dq[4])
             + G726Shared.FloatingMultiply(this.B[5] >> 2, this.Dq[5]);
 
-    public readonly int GetTwoPolePredictor() => G726Shared.FloatingMultiply(this.A[1] >> 2, this.Sr[1]) + G726Shared.FloatingMultiply(this.A[0] >> 2, this.Sr[0]);
+    /// <summary>
+    /// Computes the estimated signal from 2-pole predictor.
+    /// </summary>
+    /// <returns>The 2-pole predictor.</returns>
+    public readonly int GetTwoPolePredictor() =>
+        G726Shared.FloatingMultiply(this.A[1] >> 2, this.Sr[1])
+        + G726Shared.FloatingMultiply(this.A[0] >> 2, this.Sr[0]);
 
+    /// <summary>
+    /// Computes the quantizer step size of the adaptive quantizer.
+    /// </summary>
+    /// <returns>The quantizer step size.</returns>
     public readonly int GetStepSize()
     {
         if (this.Ap >= 256)
@@ -63,12 +134,19 @@ internal unsafe struct G726Context
         }
     }
 
+    /// <summary>
+    /// Updates the codec state variables for each output code.
+    /// </summary>
+    /// <param name="codeSize">The code size</param>
+    /// <param name="y">Quantizer step size</param>
+    /// <param name="wi">Scale factor multiplier</param>
+    /// <param name="fi">For long/short term energies</param>
+    /// <param name="dq">Quantized prediction difference</param>
+    /// <param name="sr">Reconstructed signal.</param>
+    /// <param name="dqsez">Difference from 2-pole predictor.</param>
     public void Update(int codeSize, int y, int wi, int fi, int dq, int sr, int dqsez)
     {
-        int tr, a2p;
-
         int pk0 = (dqsez < 0) ? 1 : 0;
-
         int mag = dq & 0x7FFF;
 
         int ylint = this.Yl >> 15;
@@ -76,7 +154,7 @@ internal unsafe struct G726Context
         int thr1 = (32 + ylfrac) << ylint;
         int thr2 = (ylint > 9) ? 31 << 10 : thr1;
         int dqthr = (thr2 + (thr2 >> 1)) >> 1;
-        tr = this.Td == 0 ? 0 : mag <= dqthr ? 0 : 1;
+        int tr = this.Td == 0 ? 0 : mag <= dqthr ? 0 : 1;
 
         this.Yu = y + ((wi - y) >> 5);
 
@@ -91,6 +169,7 @@ internal unsafe struct G726Context
 
         this.Yl += this.Yu + ((-this.Yl) >> 6);
 
+        int a2p = 0;
         if (tr == 1)
         {
             this.A[0] = 0;
@@ -101,7 +180,6 @@ internal unsafe struct G726Context
             this.B[3] = 0;
             this.B[4] = 0;
             this.B[5] = 0;
-            a2p = 0;
         }
         else
         {
