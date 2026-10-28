@@ -16,17 +16,17 @@ internal readonly struct Codec24() : IG726Codec
     {
         int sl = G726Shared.ConvertSample(inputSample, sampleType) >> 2;
 
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
         int d = sl - se;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int i = G726Shared.Quantize(d, y, QTable, 3);
         int dq = G726Shared.Reconstruct((i & 4) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? se - (dq & 0x3FFF) : se + dq;
         int dqsez = sr + sez - se;
-        context.Update(3, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(3, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return i;
     }
@@ -34,15 +34,15 @@ internal readonly struct Codec24() : IG726Codec
     public int DecodeSample(int i, SampleKind sampleType)
     {
         i &= 0x07;
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int dq = G726Shared.Reconstruct((i & 0x04) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? (se - (dq & 0x3FFF)) : (se + dq);
         int dqsez = sr - se + sez;
-        context.Update(3, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(3, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return sampleType switch
         {

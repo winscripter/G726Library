@@ -16,12 +16,12 @@ internal readonly struct Codec16() : IG726Codec
     {
         short sl = (short)(G726Shared.ConvertSample(inputSample, sampleType) >> 2);
 
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
         int d = sl - se;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int i = G726Shared.Quantize(d, y, QTable, 1);
 
         if (i == 3 && (d & 0x8000) == 0)
@@ -33,7 +33,7 @@ internal readonly struct Codec16() : IG726Codec
         int sr = (dq < 0) ? se - (dq & 0x3FFF) : se + dq;
         int dqsez = sr + sez - se;
 
-        context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return i;
     }
@@ -41,15 +41,15 @@ internal readonly struct Codec16() : IG726Codec
     public int DecodeSample(int i, SampleKind sampleType)
     {
         i &= 0x03;
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int dq = G726Shared.Reconstruct((i & 0x02) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? (se - (dq & 0x3FFF)) : se + dq;
         int dqsez = sr - se + sez;
-        context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return sampleType switch
         {

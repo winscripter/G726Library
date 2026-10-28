@@ -38,21 +38,21 @@
         /// </summary>
         /// <param name="pcm">The PCM sample</param>
         /// <returns>G.726 sample</returns>
-        public int EncodeFromPcm(short pcm) => g726Codec.EncodeSample(pcm, SampleKind.Pcm);
+        public int EncodeFromPcm(short pcm) => this.g726Codec.EncodeSample(pcm, SampleKind.Pcm);
 
         /// <summary>
         /// Encodes the input sample into G.726 where the input sample is G.711A.
         /// </summary>
         /// <param name="g711a">The G.711A sample</param>
         /// <returns>G.726 sample</returns>
-        public int EncodeFromG711A(byte g711a) => g726Codec.EncodeSample(g711a, SampleKind.G711A);
+        public int EncodeFromG711A(byte g711a) => this.g726Codec.EncodeSample(g711a, SampleKind.G711A);
 
         /// <summary>
         /// Encodes the input sample into G.726 where the input sample is G.711Mu.
         /// </summary>
         /// <param name="g711Mu">The G.711Mu sample</param>
         /// <returns>G.726 sample</returns>
-        public int EncodeFromG711Mu(byte g711Mu) => g726Codec.EncodeSample(g711Mu, SampleKind.G711U);
+        public int EncodeFromG711Mu(byte g711Mu) => this.g726Codec.EncodeSample(g711Mu, SampleKind.G711U);
 
         /// <summary>
         /// Encodes all input PCM samples into G.726.
@@ -69,7 +69,7 @@
 
             for (int i = 0; i < pcm.Length; i++)
             {
-                result[i] = EncodeFromPcm(pcm[i]);
+                result[i] = this.EncodeFromPcm(pcm[i]);
             }
 
             return result;
@@ -80,21 +80,21 @@
         /// </summary>
         /// <param name="input">The input sample</param>
         /// <returns>A PCM sample</returns>
-        public short DecodeToPcm(int input) => (short)g726Codec.DecodeSample(input, SampleKind.Pcm);
+        public short DecodeToPcm(int input) => (short)this.g726Codec.DecodeSample(input, SampleKind.Pcm);
 
         /// <summary>
         /// Decodes the input G.726 sample into a G.711A sample.
         /// </summary>
         /// <param name="input">The input sample</param>
         /// <returns>A G.711A sample</returns>
-        public byte DecodeToG711A(int input) => (byte)g726Codec.DecodeSample(input, SampleKind.G711A);
+        public byte DecodeToG711A(int input) => (byte)this.g726Codec.DecodeSample(input, SampleKind.G711A);
 
         /// <summary>
         /// Decodes the input G.726 sample into a G.711Mu sample.
         /// </summary>
         /// <param name="input">The input sample</param>
         /// <returns>A G.711Mu sample</returns>
-        public byte DecodeToG711Mu(int input) => (byte)g726Codec.DecodeSample(input, SampleKind.G711U);
+        public byte DecodeToG711Mu(int input) => (byte)this.g726Codec.DecodeSample(input, SampleKind.G711U);
 
         /// <summary>
         /// Decodes all input G.726 samples into PCM.
@@ -110,7 +110,7 @@
 #endif
             for (int i = 0; i < g726.Length; i++)
             {
-                result[i] = DecodeToPcm(g726[i]);
+                result[i] = this.DecodeToPcm(g726[i]);
             }
 
             return result;

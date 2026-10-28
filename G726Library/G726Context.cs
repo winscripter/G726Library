@@ -7,48 +7,44 @@ internal unsafe struct G726Context
 
     public G726Context()
     {
-        Yl = 34816;
-        Yu = 544;
+        this.Yl = 34816;
+        this.Yu = 544;
 
         for (int i = 0; i < 2; i++)
         {
-            Sr[i] = 32;
-            A[i] = 0;
-            Pk[i] = 0;
+            this.Sr[i] = 32;
+            this.A[i] = 0;
+            this.Pk[i] = 0;
         }
 
         for (int i = 0; i < 6; i++)
         {
-            Dq[i] = 32;
-            B[i] = 0;
+            this.Dq[i] = 32;
+            this.B[i] = 0;
         }
     }
 
-    public readonly int GetZeroPredictor()
-    {
-        int sezi = G726Shared.FloatingMultiply(B[0] >> 2, Dq[0]);
-        
-        for (int i = 1; i < 6; i++)
-        {
-            sezi += G726Shared.FloatingMultiply(B[i] >> 2, Dq[i]);
-        }
+    public readonly int GetZeroPredictor() =>
+        G726Shared.FloatingMultiply(this.B[0] >> 2, this.Dq[0])
+            + G726Shared.FloatingMultiply(this.B[1] >> 2, this.Dq[1])
+            + G726Shared.FloatingMultiply(this.B[2] >> 2, this.Dq[2])
+            + G726Shared.FloatingMultiply(this.B[3] >> 2, this.Dq[3])
+            + G726Shared.FloatingMultiply(this.B[4] >> 2, this.Dq[4])
+            + G726Shared.FloatingMultiply(this.B[5] >> 2, this.Dq[5]);
 
-        return sezi;
-    }
-
-    public readonly int GetTwoPolePredictor() => G726Shared.FloatingMultiply(A[1] >> 2, Sr[1]) + G726Shared.FloatingMultiply(A[0] >> 2, Sr[0]);
+    public readonly int GetTwoPolePredictor() => G726Shared.FloatingMultiply(this.A[1] >> 2, this.Sr[1]) + G726Shared.FloatingMultiply(this.A[0] >> 2, this.Sr[0]);
 
     public readonly int GetStepSize()
     {
-        if (Ap >= 256)
+        if (this.Ap >= 256)
         {
-            return Yu;
+            return this.Yu;
         }
         else
         {
-            int y = Yl >> 6;
-            int dif = Yu - y;
-            int al = Ap >> 2;
+            int y = this.Yl >> 6;
+            int dif = this.Yu - y;
+            int al = this.Ap >> 2;
 
             if (dif > 0)
             {
@@ -71,25 +67,25 @@ internal unsafe struct G726Context
 
         int mag = dq & 0x7FFF;
 
-        int ylint = Yl >> 15;
-        int ylfrac = (Yl >> 10) & 0x1F;
+        int ylint = this.Yl >> 15;
+        int ylfrac = (this.Yl >> 10) & 0x1F;
         int thr1 = (32 + ylfrac) << ylint;
         int thr2 = (ylint > 9) ? 31 << 10 : thr1;
         int dqthr = (thr2 + (thr2 >> 1)) >> 1;
-        tr = Td == 0 ? 0 : mag <= dqthr ? 0 : 1;
+        tr = this.Td == 0 ? 0 : mag <= dqthr ? 0 : 1;
 
-        Yu = y + ((wi - y) >> 5);
+        this.Yu = y + ((wi - y) >> 5);
 
-        if (Yu < 544)
+        if (this.Yu < 544)
         {
-            Yu = 544;
+            this.Yu = 544;
         }
-        else if (Yu > 5120)
+        else if (this.Yu > 5120)
         {
-            Yu = 5120;
+            this.Yu = 5120;
         }
 
-        Yl += Yu + ((-Yl) >> 6);
+        this.Yl += this.Yu + ((-this.Yl) >> 6);
 
         if (tr == 1)
         {
@@ -158,7 +154,7 @@ internal unsafe struct G726Context
             this.A[0] -= this.A[0] >> 8;
             if (dqsez != 0)
             {
-                this.A[0] = (pks1 == 0 ? 192 : -192);
+                this.A[0] = pks1 == 0 ? 192 : -192;
             }
 
             int a1ul = 15360 - a2p;
@@ -173,7 +169,7 @@ internal unsafe struct G726Context
 
             for (int cnt = 0; cnt < 6; cnt++)
             {
-                this.B[cnt] -= (codeSize == 5 ? this.B[cnt] >> 9 : this.B[cnt] >> 8);
+                this.B[cnt] -= codeSize == 5 ? this.B[cnt] >> 9 : this.B[cnt] >> 8;
 
                 if ((dq & 0x7FFF) != 0)
                 {
@@ -223,30 +219,30 @@ internal unsafe struct G726Context
         this.Pk[1] = this.Pk[0];
         this.Pk[0] = pk0;
 
-        Td = tr == 1 ? 0 : a2p < -11776 ? 1 : 0;
+        this.Td = tr == 1 ? 0 : a2p < -11776 ? 1 : 0;
 
-        Dms += (fi - Dms) >> 5;
-        Dml += (((fi << 2) - Dml) >> 7);
+        this.Dms += (fi - this.Dms) >> 5;
+        this.Dml += ((fi << 2) - this.Dml) >> 7;
 
         if (tr == 1)
         {
-            Ap = 256;
+            this.Ap = 256;
         }
         else if (y < 1536)
         {
-            Ap += (0x200 - Ap) >> 4;
+            this.Ap += (0x200 - this.Ap) >> 4;
         }
-        else if (Td == 1)
+        else if (this.Td == 1)
         {
-            Ap += (0x200 - Ap) >> 4;
+            this.Ap += (0x200 - this.Ap) >> 4;
         }
-        else if (Math.Abs((Dms << 2) - Dml) >= (Dml >> 3))
+        else if (Math.Abs((this.Dms << 2) - this.Dml) >= (this.Dml >> 3))
         {
-            Ap += (0x200 - Ap) >> 4;
+            this.Ap += (0x200 - this.Ap) >> 4;
         }
         else
         {
-            Ap += (-Ap) >> 4;
+            this.Ap += (-this.Ap) >> 4;
         }
     }
 }

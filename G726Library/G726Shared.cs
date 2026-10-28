@@ -28,7 +28,7 @@ internal static class G726Shared
         int anmant = (anmag == 0) ? 32 : (anexp >= 0) ? anmag >> anexp : anmag << -anexp;
         int wanexp = anexp + ((fpRepresentation >> 6) & 0xF) - 13;
 
-        int wanmant = ((anmant * (fpRepresentation & 077)) + 0x30) >> 4;
+        int wanmant = ((anmant * (fpRepresentation & 77)) + 0x30) >> 4;
         int retval = (wanexp >= 0) ? ((wanmant << wanexp) & 0x7FFF) : (wanmant >> -wanexp);
 
         return ((integer ^ fpRepresentation) < 0) ? -retval : retval;
@@ -53,7 +53,7 @@ internal static class G726Shared
 
         if (dql < 0)
         {
-            return (sign ? -0x8000 : 0);
+            return sign ? -0x8000 : 0;
         }
         else
         {

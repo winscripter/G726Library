@@ -29,10 +29,15 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="C:\Users\User\source\repos\G726Library\G726Library\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\User\source\repos\G726Library\G726Library\.editorconfig" />
   </ItemGroup>
 
 </Project>
