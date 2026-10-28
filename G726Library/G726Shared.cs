@@ -10,11 +10,9 @@ internal static class G726Shared
 
     public static int QuantizeWithinRange(int value, ReadOnlySpan<int> table, int size)
     {
-        int baseVal = 0;
-
         for (int i = 0; i < size; i++)
         {
-            if (value < table[baseVal++])
+            if (value < table[i])
             {
                 return i;
             }
