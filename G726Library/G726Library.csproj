@@ -30,6 +30,7 @@
       <PackagePath>\</PackagePath>
     </None>
     <None Include="C:\Users\User\source\repos\G726Library\G726Library\.editorconfig" />
+    <InternalsVisibleTo Include="G726Library.Tests" />
   </ItemGroup>
 
   <ItemGroup>
