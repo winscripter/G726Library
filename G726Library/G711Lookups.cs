@@ -35,9 +35,14 @@ internal static class G711Lookups
         data += 8;
 
         if (exponent != 0)
+        {
             data += 0x100;
+        }
+
         if (exponent > 1)
+        {
             data <<= (exponent - 1);
+        }
 
         return (short)(sign == 0 ? data : -data);
     }
@@ -62,9 +67,16 @@ internal static class G711Lookups
         int compressed;
 
         int sign = (pcm & 0x8000) >> 8;
+
         if (sign != 0)
+        {
             pcm = (short)-pcm;
-        if (pcm > 0x7FFF) pcm = 0x7FFF;
+        }
+
+        if (pcm > 0x7FFF)
+        {
+            pcm = 0x7FFF;
+        }
 
         if (pcm >= 256)
         {
@@ -88,8 +100,11 @@ internal static class G711Lookups
 
         pcm += 0x84;
         int exponent = 7;
+
         for (int expMask = 0x4000; (pcm & expMask) == 0 && exponent > 0; expMask >>= 1)
+        {
             exponent--;
+        }
 
         int mantissa = (pcm >> (exponent + 3)) & 0x0F;
         return (byte)(~(sign | (exponent << 4) | mantissa));

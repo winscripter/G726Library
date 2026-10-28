@@ -25,7 +25,9 @@ internal readonly struct Codec16() : IG726Codec
         int i = G726Shared.Quantize(d, y, QTable, 1);
 
         if (i == 3 && (d & 0x8000) == 0)
+        {
             i = 0;
+        }
 
         int dq = G726Shared.Reconstruct((i & 2) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? se - (dq & 0x3FFF) : se + dq;

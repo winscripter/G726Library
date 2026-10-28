@@ -11,11 +11,15 @@ internal static class G726Shared
     public static int QuantizeWithinRange(int value, ReadOnlySpan<int> table, int size)
     {
         int baseVal = 0;
+
         for (int i = 0; i < size; i++)
         {
             if (value < table[baseVal++])
+            {
                 return i;
+            }
         }
+
         return size;
     }
 
@@ -98,7 +102,9 @@ internal static class G726Shared
     public static byte TandemAdjustMulaw(int sr, int se, int y, int i, int sign, ReadOnlySpan<int> qtab)
     {
         if (sr <= -32768)
+        {
             sr = 0;
+        }
 
         int sp = G711Codec.LinearToMu((short)(sr << 2));
         int dx = (G711Codec.MuToLinear((byte)sp) >> 2) - se;

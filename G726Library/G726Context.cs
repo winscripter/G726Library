@@ -33,11 +33,10 @@ internal unsafe struct G726Context
             sezi += G726Shared.FloatingMultiply(B[i] >> 2, Dq[i]);
         }
 
-        return (sezi);
+        return sezi;
     }
 
-    public readonly int GetTwoPolePredictor() =>
-        G726Shared.FloatingMultiply(A[1] >> 2, Sr[1]) + G726Shared.FloatingMultiply(A[0] >> 2, Sr[0]);
+    public readonly int GetTwoPolePredictor() => G726Shared.FloatingMultiply(A[1] >> 2, Sr[1]) + G726Shared.FloatingMultiply(A[0] >> 2, Sr[0]);
 
     public readonly int GetStepSize()
     {
@@ -57,7 +56,7 @@ internal unsafe struct G726Context
             }
             else if (dif < 0)
             {
-                y += (dif * al + 0x3F) >> 6;
+                y += ((dif * al) + 0x3F) >> 6;
             }
 
             return y;
@@ -82,9 +81,13 @@ internal unsafe struct G726Context
         Yu = y + ((wi - y) >> 5);
 
         if (Yu < 544)
+        {
             Yu = 544;
+        }
         else if (Yu > 5120)
+        {
             Yu = 5120;
+        }
 
         Yl += Yu + ((-Yl) >> 6);
 
@@ -160,9 +163,13 @@ internal unsafe struct G726Context
 
             int a1ul = 15360 - a2p;
             if (this.A[0] < -a1ul)
+            {
                 this.A[0] = -a1ul;
+            }
             else if (this.A[0] > a1ul)
+            {
                 this.A[0] = a1ul;
+            }
 
             for (int cnt = 0; cnt < 6; cnt++)
             {
@@ -176,7 +183,9 @@ internal unsafe struct G726Context
         }
 
         for (int cnt = 5; cnt > 0; cnt--)
+        {
             this.Dq[cnt] = this.Dq[cnt - 1];
+        }
 
         if (mag == 0)
         {
@@ -220,14 +229,24 @@ internal unsafe struct G726Context
         Dml += (((fi << 2) - Dml) >> 7);
 
         if (tr == 1)
+        {
             Ap = 256;
+        }
         else if (y < 1536)
+        {
             Ap += (0x200 - Ap) >> 4;
+        }
         else if (Td == 1)
+        {
             Ap += (0x200 - Ap) >> 4;
+        }
         else if (Math.Abs((Dms << 2) - Dml) >= (Dml >> 3))
+        {
             Ap += (0x200 - Ap) >> 4;
+        }
         else
+        {
             Ap += (-Ap) >> 4;
+        }
     }
 }
