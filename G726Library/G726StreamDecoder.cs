@@ -10,6 +10,7 @@ public class G726StreamDecoder : IDisposable
     private readonly PackingType packingType;
     private readonly int bitRate;
     private readonly int bitsPerSample;
+    private long totalSamplesRead;
     private bool disposed;
     
     private G726StreamDecoder(G726Codec g726Codec, IBitReader bitReader, int bitRate, PackingType packingType)
@@ -94,6 +95,35 @@ public class G726StreamDecoder : IDisposable
         {
             byte sampleG726 = (byte)this.bitReader.ReadBits(this.bitsPerSample);
             buffer[i] = (short)this.Codec.g726Codec.DecodeSample(sampleG726, sampleKind);
+            this.totalSamplesRead++;
+        }
+    }
+
+    /// <summary>
+    /// Decodes the next samples into <paramref name="buffer"/>. When the decode is successful,
+    /// returns true. Otherwise, returns false (usually due to an end-of-stream error).
+    /// </summary>
+    /// <param name="buffer">Contains the next samples to be decoded.</param>
+    /// <param name="samplesRead">Number of samples read successfully.</param>
+    /// <param name="sampleKind">Represents the kind of each sample in <paramref name="buffer"/>.</param>
+    /// <exception cref="EndOfStreamException">Thrown on an end-of-stream.</exception>
+    /// <returns>
+    /// When true, all samples decoded correctly. When false, not all samples were correctly decoded.
+    /// </returns>
+    public bool TryDecode(Span<short> buffer, out int samplesRead, SampleKind sampleKind = SampleKind.Pcm)
+    {
+        long prevSamplesRead = this.totalSamplesRead;
+        samplesRead = 0;
+        try
+        {
+            this.Decode(buffer, sampleKind);
+            samplesRead = buffer.Length;
+            return true;
+        }
+        catch
+        {
+            samplesRead = (int)(this.totalSamplesRead - prevSamplesRead);
+            return false;
         }
     }
 
