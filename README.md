@@ -1,5 +1,5 @@
 # Overview
-G726Library is an ITU-T G.726 codec written in C#. It can take any input PCM, G.711A or G.711Mu sample and encode it into
+G726Library is an ITU-T G.726/G.723/G.721 codec written in C#. It can take any input PCM, G.711A or G.711Mu sample and encode it into
 G.726 and vice versa. It also supports 16, 24, 32 and 40 Kbps modes.
 
 # Usage

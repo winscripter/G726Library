@@ -14,14 +14,12 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>g726 audio codec</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageReleaseNotes>
-      - Don't make the `G726Codec` class sealed (classes can now inherit from it)
-      - Use the `byte` type for G711 samples instead of `short`
-    </PackageReleaseNotes>
-    <Version>1.0.2</Version>
+    <PackageReleaseNotes>- Fix floating-point multiplication bug
+- Add stream decoder and encoder</PackageReleaseNotes>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
