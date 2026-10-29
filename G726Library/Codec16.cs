@@ -1,50 +1,81 @@
-﻿namespace G726Library;
+﻿// Copyright (c) 2023-2026, winscripter
+// Licensed under the MIT License.
+// See LICENSE.txt for license details.
 
-internal sealed class Codec16 : IG726Codec
+namespace G726Library;
+
+/// <summary>
+/// 16 Kbit/s G.726 encoder and decoder.
+/// </summary>
+internal readonly struct Codec16() : IG726Codec
 {
+    /// <summary>
+    /// Maps code words to reconstructed scale factor normalized log magnitude values.
+    /// </summary>
     public static ReadOnlySpan<short> DqlnTable => [116, 365, 365, 116];
+
+    /// <summary>
+    /// Maps code words to log of scale factor multiplier.
+    /// </summary>
     public static ReadOnlySpan<short> WiTable => [-704, 14048, 14048, -704];
+
+    /// <summary>
+    /// Maps code words to a set of values whose long and short term averages
+    /// are computed and then compared to give an indication how
+    /// stationary (steady state) the signal is.
+    /// </summary>
     public static ReadOnlySpan<short> FiTable => [0, 0xE00, 0xE00, 0];
+
+    /// <summary>
+    /// Quantization table.
+    /// </summary>
     public static ReadOnlySpan<int> QTable => [261];
 
+    /// <summary>
+    /// Contains the decoding/encoding state.
+    /// </summary>
     private readonly G726Context context = new();
 
+    /// <inheritdoc />
     public int EncodeSample(short inputSample, SampleKind sampleType)
     {
         short sl = (short)(G726Shared.ConvertSample(inputSample, sampleType) >> 2);
 
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
         int d = sl - se;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int i = G726Shared.Quantize(d, y, QTable, 1);
 
         if (i == 3 && (d & 0x8000) == 0)
+        {
             i = 0;
+        }
 
         int dq = G726Shared.Reconstruct((i & 2) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? se - (dq & 0x3FFF) : se + dq;
         int dqsez = sr + sez - se;
 
-        context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return i;
     }
 
+    /// <inheritdoc />
     public int DecodeSample(int i, SampleKind sampleType)
     {
         i &= 0x03;
-        int sezi = context.GetZeroPredictor();
+        int sezi = this.context.GetZeroPredictor();
         int sez = sezi >> 1;
-        int sei = sezi + context.GetTwoPolePredictor();
+        int sei = sezi + this.context.GetTwoPolePredictor();
         int se = sei >> 1;
-        int y = context.GetStepSize();
+        int y = this.context.GetStepSize();
         int dq = G726Shared.Reconstruct((i & 0x02) != 0, DqlnTable[i], y);
         int sr = (dq < 0) ? (se - (dq & 0x3FFF)) : se + dq;
         int dqsez = sr - se + sez;
-        context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
+        this.context.Update(2, y, WiTable[i], FiTable[i], dq, sr, dqsez);
 
         return sampleType switch
         {

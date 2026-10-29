@@ -1,76 +1,30 @@
 # Overview
-G726Library is an ITU-T G.726 codec written in C#. It can take any input PCM, G.711A or G.711Mu sample and encode it into
+G726Library is an ITU-T G.726/G.723/G.721 codec written in C#. It can take any input PCM, G.711A or G.711Mu sample and encode it into
 G.726 and vice versa. It also supports 16, 24, 32 and 40 Kbps modes.
 
 # Usage
 Start by installing the G726Library NuGet package. Go to the Visual Studio NuGet Package Manager, search G726Library
 and install it. If you're using the .NET CLI, use `dotnet add package G726Library`.
 
-Here are a few examples.
-
-### Encode G.726 samples from PCM (24Kbps)
+Here's an example of decoding a G.726 (32 Kbit/s) stream into PCM.
 
 ```cs
 using G726Library;
 
-static void PcmToG726(short[] pcm, int[] g726)
-{
-	G726Codec codec = G726Codec.Create24Kbps();
+using FileStream g726 = File.OpenRead("speech.g726");
+using G726StreamDecoder decoder = new(32, g726);
+Span<short> samples = stackalloc short[160];
 
-	for (int i = 0; i < pcm.Length; i++)
-	{
-		g726[i] = codec.EncodeFromPcm(pcm[i]);
-	}
+bool success = true;
+while (success)
+{
+	success = decoder.TryDecode(samples, out int samplesDecoded, SampleKind.Pcm);
+	Span<short> decoded = samples[..samplesDecoded];
+	ProcessPCMSamples(decoded);
 }
 ```
 
-### Decode PCM samples from G.726 (24Kbps)
-
-```cs
-using G726Library;
-
-static void G726toPcm(int[] g726, short[] pcm)
-{
-	G726Codec codec = G726Codec.Create24Kbps();
-
-	for (int i = 0; i < g726.Length; i++)
-	{
-		pcm[i] = codec.DecodeToPcm(g726[i]);
-	}
-}
-```
-
-### Decode G.711A samples from G.726 (24Kbps)
-
-```cs
-using G726Library;
-
-static void G726toG711A(int[] g726, byte[] g711a)
-{
-	G726Codec codec = G726Codec.Create24Kbps();
-
-	for (int i = 0; i < g726.Length; i++)
-	{
-		g711a[i] = (byte)codec.DecodeToG711A(g726[i]);
-	}
-}
-```
-
-### Encode G.726 samples from G.711Mu (40Kbps)
-
-```cs
-using G726Library;
-
-static void G711MuToG726(short[] g711, int[] g726)
-{
-	G726Codec codec = G726Codec.Create40Kbps();
-
-	for (int i = 0; i < g711.Length; i++)
-	{
-		g726[i] = codec.EncodeFromG711Mu(g711[i]);
-	}
-}
-```
+For more information, please see the [documentation](docs/index.md).
 
 # Strengths
 - High compatibility. Any framework since .NET Framework 4.7.2 and .NET Core 2.1 is supported.
@@ -79,7 +33,7 @@ static void G711MuToG726(short[] g711, int[] g726)
 - Simplicity. It is very easy to use.
 - Memory management. Unless we're talking overloads that return arrays of decoded/encoded samples, the codec performs no allocations at all.
 - Contributions are very welcome. You can ask questions, report bugs, or submit PRs.
-- Super lightweight. Only weighs around ~18KB.
+- Super lightweight. Only weighs around ~23KB.
 
 # Benchmarks
 The following benchmarks demonstrate the codec performance of encoding 10 seconds of 40 Kbps audio into G.726, as well as decoding it back.
