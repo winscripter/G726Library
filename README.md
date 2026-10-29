@@ -33,7 +33,7 @@ For more information, please see the [documentation](docs/index.md).
 - Simplicity. It is very easy to use.
 - Memory management. Unless we're talking overloads that return arrays of decoded/encoded samples, the codec performs no allocations at all.
 - Contributions are very welcome. You can ask questions, report bugs, or submit PRs.
-- Super lightweight. Only weighs around ~18KB.
+- Super lightweight. Only weighs around ~23KB.
 
 # Benchmarks
 The following benchmarks demonstrate the codec performance of encoding 10 seconds of 40 Kbps audio into G.726, as well as decoding it back.
